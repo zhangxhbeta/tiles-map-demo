@@ -1,0 +1,81 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title></title>
+  <meta content="" name="description"/>
+  <meta content="webkit" name="renderer"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+  <style>
+    .leaflet-control-attribution {
+      display: none;
+    }
+    .leaflet-container {
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div id="map" style="height: 600px; width:800px; float: left;"></div>
+  <div id="info" style="width: 200px; float: left; margin: 8px;">
+    <h2>站点经纬度标记</h2>
+  <div>
+
+  <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+  <script>
+  var map = L.map('map').setView([0, 0], 2);
+  L.tileLayer('kuang/{z}/{x}/{y}.png', {
+    minZoom: 1,
+    maxZoom: 5,
+    attribution: '',
+    tms: true,
+    noWrap: true
+  }).addTo(map);
+
+  var info = document.getElementById('info');
+  function onMapClick(e) {
+    var p = document.createElement('p');
+    p.innerHTML = '[' + e.latlng.lat + ',' + e.latlng.lng + '], ';
+    info.appendChild(p);
+
+    var mark = L.marker(e.latlng, {
+      draggable: true,
+      title: '站点编辑'
+    });
+
+    var a = document.createElement('a');
+    a.innerHTML = '删除检测点';
+    a.href = "#";
+    a.onclick = function() {
+      info.removeChild(p);
+      mark.remove();
+    }
+    mark.addTo(map)
+    .on('move', function(e) {
+      p.innerHTML = '[' + e.latlng.lat + ',' + e.latlng.lng + '],';
+    })
+    .bindPopup(a)
+    .openPopup();
+  }
+  map.on('click', onMapClick);
+  map.on('dblclick', function (e) { return false; });
+  // create a red polyline from an array of LatLng points
+  var latlngs = [
+     [64.62387720204691,-30.585937500000004], [48.45835188280866,-32.69531250000001], [54.36775852406841,7.734375000000001], [55.178867663282006,82.96875000000001], [40.44694705960048,87.18750000000001], [41.50857729743935,94.921875], [54.36775852406841,93.86718750000001], [54.97761367069628,106.17187500000001], [55.57834467218206,111.79687500000001], [3.5134210456400448,111.4453125], [2.4601811810210052,-15.117187500000002], [-18.312810846425442,-24.609375000000004], [-16.299051014581817,110.39062500000001], [-31.353636941500987,111.09375000000001], [-30.44867367928756,-31.289062500000004], [-45.33670190996811,-30.585937500000004], [-46.07323062540835,109.68750000000001], [-57.70414723434192,110.03906250000001], [-57.51582286553883,-18.281250000000004], [-64.92354174306496,-17.929687500000004], [-66.23145747862573,104.765625]
+   ];
+  var polyline = L.polyline(latlngs, {
+    color: 'red',
+    weight: 8,
+    opacity: 0.5
+  }).addTo(map);
+
+  for (var i=0; i<latlngs.length; i++)
+    L.circle(latlngs[i], {
+      weight: 12,
+      color: 'blue'
+    }).addTo(map);
+
+  </script>
+</body>
+</html>
